@@ -4,6 +4,7 @@ const userModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
+const otpGenerator = require("otp-generator");
 
 module.exports = {
   register: async (req, res) => {
@@ -126,13 +127,78 @@ module.exports = {
         const body = req.body;
 
         // update the data
-        userModel.updateOne({ _id: userId }, body).then((data)=>{
-         
+        userModel.updateOne({ _id: userId }, body).then((data) => {
           return res.status(201).send({ msg: "Record Updated...!" });
-        })
-      
+        });
       } else {
         return res.status(401).send({ error: "User Not Found...!" });
+      }
+    } catch (error) {
+      return res.status(401).send({ error });
+    }
+  },
+  generateOTP: async (req, res) => {
+    req.app.locals.OTP = await otpGenerator.generate(6, {
+      lowerCaseAlphabets: false,
+      upperCaseAlphabets: false,
+      specialChars: false,
+    });
+    res.status(201).send({ code: req.app.locals.OTP });
+  },
+  verifyOTP: async (req, res) => {
+    const { code } = req.query;
+    console.log(`OTP:` + code);
+    if (parseInt(req.app.locals.OTP) === parseInt(code)) {
+      req.app.locals.OTP = null; // reset the OTP value
+      req.app.locals.resetSession = true; // start session for reset password
+      return res.status(201).send({ msg: "Verify Successsfully!" });
+    }
+    return res.status(400).send({ error: "Invalid OTP" });
+  },
+  createResetSession: async (req, res) => {
+    if (req.app.locals.resetSession) {
+      return res.status(201).send({ msg: "Access" });
+    }
+    return res.status(440).send({ error: "Session expired!" });
+  },
+  resetPassword: async (req, res) => {
+    try {
+      if (!req.app.locals.resetSession)
+        return res.status(440).send({ error: "Session expired!" });
+
+      const { email, password } = req.body;
+
+      try {
+        userModel
+          .findOne({ email })
+          .then((user) => {
+            bcrypt
+              .hash(password, 10)
+              .then((hashedPassword) => {
+                userModel
+                  .updateOne(
+                    { email: user.email },
+                    { password: hashedPassword }
+                  )
+                  .then((data) => {
+                    req.app.locals.resetSession = false; // reset session
+                    return res.status(201).send({ msg: "Record Updated...!" });
+                  })
+                  .catch((err) => {
+                    if (err) throw err;
+                  });
+              })
+              .catch((e) => {
+                return res.status(500).send({
+                  error: "Enable to hashed password",
+                });
+              });
+          })
+          .catch((error) => {
+            return res.status(404).send({ error: "Username not Found" });
+          });
+      } catch (error) {
+        return res.status(500).send({ error });
       }
     } catch (error) {
       return res.status(401).send({ error });

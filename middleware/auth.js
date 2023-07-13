@@ -1,4 +1,3 @@
-
 const jwt = require("jsonwebtoken");
 
 const verifyUserLogin = async (req, res, next) => {
@@ -16,4 +15,13 @@ const verifyUserLogin = async (req, res, next) => {
     res.status(401).json({ error: "Authentication Failed!" });
   }
 };
-module.exports = { verifyUserLogin };
+
+
+const localVariables=(req, res, next)=>{
+    req.app.locals = {
+        OTP : null,
+        resetSession : false
+    }
+    next()
+}
+module.exports = { verifyUserLogin ,localVariables};
