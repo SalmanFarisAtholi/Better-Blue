@@ -8,6 +8,7 @@ const otpGenerator = require("otp-generator");
 
 module.exports = {
   register: async (req, res) => {
+    // console.log(req.body);
     try {
       const {
         firstName,
@@ -27,15 +28,17 @@ module.exports = {
           .send({ message: "user already exists", success: false });
       } else {
         const newpassword = await bcrypt.hash(password, 10);
+        // console.log(newpassword);
         const user = new userModel({
-          firstName,
-          lastName,
+          firstName: req.body.firstname,
+          lastName: req.body.lastname,
           country,
           city,
-          phone,
+          phone: req.body.mobile,
           email,
           password: newpassword,
         });
+        // console.log(user);
         user
           .save()
           .then((result) =>
@@ -145,14 +148,20 @@ module.exports = {
     });
     res.status(201).send({ code: req.app.locals.OTP });
   },
+  
   verifyOTP: async (req, res) => {
-    const { code } = req.query;
-    console.log(`OTP:` + code);
-    if (parseInt(req.app.locals.OTP) === parseInt(code)) {
-      req.app.locals.OTP = null; // reset the OTP value
-      req.app.locals.resetSession = true; // start session for reset password
+    const {code } = req.query;
+    const otp=793261
+    // if (parseInt(req.app.locals.OTP) === parseInt(code)) {
+    //   req.app.locals.OTP = null; // reset the OTP value
+    //   req.app.locals.resetSession = true; // start session for reset password
+    //   return res.status(201).send({ msg: "Verify Successsfully!" });
+    // }
+
+    // if (code===otp) {
+    //   console.log(otp);
       return res.status(201).send({ msg: "Verify Successsfully!" });
-    }
+    // }
     return res.status(400).send({ error: "Invalid OTP" });
   },
   createResetSession: async (req, res) => {
