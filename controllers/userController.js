@@ -148,10 +148,10 @@ module.exports = {
     });
     res.status(201).send({ code: req.app.locals.OTP });
   },
-  
+
   verifyOTP: async (req, res) => {
-    const {code } = req.query;
-    const otp=793261
+    const { code } = req.query;
+    const otp = 793261;
     // if (parseInt(req.app.locals.OTP) === parseInt(code)) {
     //   req.app.locals.OTP = null; // reset the OTP value
     //   req.app.locals.resetSession = true; // start session for reset password
@@ -160,7 +160,7 @@ module.exports = {
 
     // if (code===otp) {
     //   console.log(otp);
-      return res.status(201).send({ msg: "Verify Successsfully!" });
+    return res.status(201).send({ msg: "Verify Successsfully!" });
     // }
     return res.status(400).send({ error: "Invalid OTP" });
   },
