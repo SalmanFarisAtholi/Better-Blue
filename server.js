@@ -3,14 +3,15 @@ if (process.env.NODE_ENV !== "production") {
 }
 const express = require("express");
 const morgan = require("morgan");
-const multer = require("multer");
+
 const cors = require("cors");
 const app = express();
 const DATABASE_URL = process.env.DATABASE_URL
+const path=require("path")
 const userRouter =require('./router/userRouter')
 const adminRouter=require('./router/adminRouter')
 const dbConnect = require('./config/dbconnection');
-
+app.use('/', express.static(path.join(__dirname, 'public'))) 
 dbConnect(DATABASE_URL)
 
 // middlewares

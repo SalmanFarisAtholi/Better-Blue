@@ -5,6 +5,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const otpGenerator = require("otp-generator");
+const fixture = require("../models/fixtures");
+
 
 module.exports = {
   register: async (req, res) => {
@@ -211,6 +213,14 @@ module.exports = {
       }
     } catch (error) {
       return res.status(401).send({ error });
+    }
+  },
+  getMatch: async (req, res) => {
+    try {
+      const fixtures = await fixture.find({access:true})
+      return res.status(201).send(fixtures);
+    } catch (error) {
+      return res.status(500).send(error);
     }
   },
 };
