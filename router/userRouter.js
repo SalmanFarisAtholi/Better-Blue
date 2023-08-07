@@ -12,7 +12,8 @@ const {
   verifyOTP,
   resetPassword,
   createResetSession,
-  getMatch
+  getMatch,
+  getOneMatch,
 } = require("../controllers/userController");
 
 const { adminLogin } = require("../controllers/adminController");
@@ -28,7 +29,8 @@ router.get("/user/:email", getUser);
 router.get("/generateOTP", verifyUser, localVariables, generateOTP);
 router.get("/verifyOTP", verifyOTP);
 router.get("/createResetSession", createResetSession);
-router.get("/getMatch",getMatch );
+router.get("/getMatch", getMatch);
+router.get("/getOneMatch/:id", getOneMatch);
 
 // PUT Methods
 router.put("/updateUser", verifyUserLogin, updateUser);

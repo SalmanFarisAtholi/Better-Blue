@@ -81,7 +81,7 @@ module.exports = {
               const token = jwt.sign(
                 {
                   userId: user._id,
-                  username: user.firstName,
+                  username: user.email,
                 },
                 JWT_SECRET_KEY,
                 { expiresIn: "24h" }
@@ -89,7 +89,8 @@ module.exports = {
 
               return res.status(200).send({
                 msg: "Login Successful..!",
-                username: user.firstName,
+                userEmail: user.email,
+                userName:user.firstName,
                 token,
               });
             })
@@ -223,4 +224,14 @@ module.exports = {
       return res.status(500).send(error);
     }
   },
+  getOneMatch:async (req,res)=>{
+    try {
+      const id=req.params.id
+      const match = await fixture.findById(id)
+      return res.status(201).send(match);
+    } catch (error) {
+      return res.status(500).send(error);
+
+    }
+  }
 };
