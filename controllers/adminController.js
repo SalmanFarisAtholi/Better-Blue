@@ -1,8 +1,9 @@
 const express = require("express");
 const stadium = require("../models/stadium");
 const fixture = require("../models/fixtures");
-
+const Opponent = require("../models/opponent");
 const jwt = require("jsonwebtoken");
+const opponent = require("../models/opponent");
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 module.exports = {
   adminLogin: async (req, res) => {
@@ -73,40 +74,74 @@ module.exports = {
     }
   },
   addMatch: async (req, res) => {
-    // console.log(req.body, req.file);
+    console.log(req.body);
+    const opponentId = req.body.formData.opponent;
     try {
-     
       // const matchExits = fixture.findOne({ matchTime: matchTime });
       // console.log(matchExits);
+      const opponent = await Opponent.findById(opponentId);
+      // const win = opponent.win;
+      // const totalMatch = opponent.totalMatch;
+      const win = 10;
+      const totalMatch = 15;
+      const winningPercentage = Math.floor((win / totalMatch) * 100);
 
-      const match= new fixture({
-        opponent:req.body.opponent,
-        shortName:req.body.shortName,
-        logo:req.file.filename,
-        matchTime:req.body.matchTime,
-        matchType:req.body.matchType,
-        totalMatch:req.body.totalMatch,
-        win:req.body.win,
-        draw:req.body.draw,
-        winProbability:req.body.winProbability,
-        home:req.body.home,
-      })
-      match
-      .save()
-      .then((result) => {
-        res.status(201).send({ msg: "Match creation success" });
-      })
-      .catch((error) => {
-        res.status(500).send(error);
+      const match = new fixture({
+        opponentId: req.body.formData.opponent,
+        matchTime: req.body.formData.matchTime,
+        matchType: req.body.formData.matchType,
+        winProbability: winningPercentage,
+        home: req.body.formData.home,
       });
+      match
+        .save()
+        .then((result) => {
+          res.status(201).send({ msg: "Match creation success" });
+        })
+        .catch((error) => {
+          res.status(500).send(error);
+        });
     } catch (error) {
       return res.status(500).send(error);
     }
   },
   getMatch: async (req, res) => {
     try {
-      const fixtures = await fixture.find({access:true})
+      const fixtures = await fixture
+        .find({ access: true })
+        .populate("opponentId");
+
       return res.status(201).send(fixtures);
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  },
+  addOpponent: async (req, res) => {
+    try {
+      const opponent = new Opponent({
+        name: req.body.name,
+        shortName: req.body.shortName,
+        logo: req.file.filename,
+        totalMatch: req.body.totalMatch,
+        win: req.body.win,
+        draw: req.body.draw,
+      });
+      opponent
+        .save()
+        .then((result) => {
+          res.status(201).send({ msg: "Opponent creation success" });
+        })
+        .catch((error) => {
+          res.status(500).send(error);
+        });
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  },
+  getOpponent: async (req, res) => {
+    try {
+      const opponents = await Opponent.find();
+      return res.status(201).send(opponents);
     } catch (error) {
       return res.status(500).send(error);
     }

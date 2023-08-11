@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const stripe =require("../controllers/paymentController")
+
 const { sendEmailOTP, registerMail } = require("../controllers/mailController");
 const { verifyUserLogin, localVariables } = require("../middleware/auth");
 const {
@@ -14,6 +16,7 @@ const {
   createResetSession,
   getMatch,
   getOneMatch,
+  doPayment
 } = require("../controllers/userController");
 
 const { adminLogin } = require("../controllers/adminController");
@@ -23,7 +26,7 @@ router.post("/register", register);
 router.post("/registerMail", registerMail);
 router.post("/authenticate");
 router.post("/login", verifyUser, login);
-
+router.post("/doPayment",doPayment)
 // GET Methods
 router.get("/user/:email", getUser);
 router.get("/generateOTP", verifyUser, localVariables, generateOTP);

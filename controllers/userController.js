@@ -6,7 +6,10 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const otpGenerator = require("otp-generator");
 const fixture = require("../models/fixtures");
+const ticket = require("../models/tickets");
+const { generateRazorpay } = require("./paymentController");
 
+const app = express();
 
 module.exports = {
   register: async (req, res) => {
@@ -90,7 +93,7 @@ module.exports = {
               return res.status(200).send({
                 msg: "Login Successful..!",
                 userEmail: user.email,
-                userName:user.firstName,
+                userName: user.firstName,
                 token,
               });
             })
@@ -218,20 +221,33 @@ module.exports = {
   },
   getMatch: async (req, res) => {
     try {
-      const fixtures = await fixture.find({access:true})
+      const fixtures = await fixture
+        .find({ access: true })
+        .populate("opponentId");
       return res.status(201).send(fixtures);
     } catch (error) {
       return res.status(500).send(error);
     }
   },
-  getOneMatch:async (req,res)=>{
+  getOneMatch: async (req, res) => {
     try {
-      const id=req.params.id
-      const match = await fixture.findById(id)
+      const id = req.params.id;
+      console.log(id);
+      const match = await fixture.findById(id).populate("opponentId")
       return res.status(201).send(match);
     } catch (error) {
       return res.status(500).send(error);
-
     }
-  }
+  },
+
+  doPayment: async (req, res) => {
+    await generateRazorpay()
+      .then((result) => {
+        console.log(result);
+        return res.status(201).send(result);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  },
 };
