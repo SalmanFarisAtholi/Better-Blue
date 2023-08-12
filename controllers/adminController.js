@@ -2,8 +2,11 @@ const express = require("express");
 const stadium = require("../models/stadium");
 const fixture = require("../models/fixtures");
 const Opponent = require("../models/opponent");
+const partner = require("../models/partner");
+
 const jwt = require("jsonwebtoken");
-const opponent = require("../models/opponent");
+const News = require("../models/news");
+
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 module.exports = {
   adminLogin: async (req, res) => {
@@ -146,4 +149,50 @@ module.exports = {
       return res.status(500).send(error);
     }
   },
+  addNews: async (req, res) => {
+    try {
+      const news = new News({
+        headline: req.body.headline,
+        description: req.body.description,
+        image: req.file.filename,
+      });
+      news.save().then(() => {
+        res.status(201).send({ msg: "News Added Successfully" });
+      });
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  },
+  getNews: async (req, res) => {
+    try {
+      const news = await News.find().limit(3);
+      return res.status(201).send(news);
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  },
+  addPartner: async (req, res) => {
+    try {
+      const newPartner = new partner({
+        name: req.body.name,
+        place: req.body.place,
+        link: req.body.link,
+        logo: req.file.filename,
+        date: Date.now(),
+      });
+      newPartner.save().then(() => {
+        res.status(201).send({ msg: "Partner Added Successfully" });
+      });
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  },
+  getPartner: async (req, res) => {
+    try {
+      const partners = await partner.find().limit(3);
+      return res.status(201).send(partners);
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  }, 
 };
