@@ -3,6 +3,7 @@ const stadium = require("../models/stadium");
 const fixture = require("../models/fixtures");
 const Opponent = require("../models/opponent");
 const partner = require("../models/partner");
+const player = require("../models/player");
 
 const jwt = require("jsonwebtoken");
 const News = require("../models/news");
@@ -189,10 +190,41 @@ module.exports = {
   },
   getPartner: async (req, res) => {
     try {
-      const partners = await partner.find().limit(3);
+      const partners = await partner.find();
       return res.status(201).send(partners);
     } catch (error) {
       return res.status(500).send(error);
     }
-  }, 
+  },
+  addPlayer: async (req, res) => {
+    try {
+      console.log(req.body);
+      const newPlayer = new player({
+        name: req.body.name,
+        number: req.body.number,
+        place: req.body.pob,
+        DOB: req.body.dob,
+        nationality: req.body.nationality,
+        photo: req.file.filename,
+        position: req.body.position,
+        link: req.body.link,
+      });
+      newPlayer.save().then(() => {
+        res.status(201).send({ msg: "Player Added Successfully" });
+      });
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  },
+  getPlayer: async (req, res) => {
+    try {
+      const players = await player.find();
+      return res.status(201).send(players);
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  },
+  addResult:async(req,res)=>{
+    console.log(req.body);
+  }
 };

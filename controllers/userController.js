@@ -8,6 +8,8 @@ const otpGenerator = require("otp-generator");
 const fixture = require("../models/fixtures");
 const ticket = require("../models/tickets");
 const { generateRazorpay } = require("./paymentController");
+const partner = require("../models/partner");
+const News = require("../models/news");
 
 const app = express();
 
@@ -233,7 +235,7 @@ module.exports = {
     try {
       const id = req.params.id;
       console.log(id);
-      const match = await fixture.findById(id).populate("opponentId")
+      const match = await fixture.findById(id).populate("opponentId");
       return res.status(201).send(match);
     } catch (error) {
       return res.status(500).send(error);
@@ -241,13 +243,52 @@ module.exports = {
   },
 
   doPayment: async (req, res) => {
-    await generateRazorpay()
-      .then((result) => {
-        console.log(result);
-        return res.status(201).send(result);
+    const user = await userModel.findOne({ email: req.body.values.email });
+    const statuz = "Pending";
+    const totalPrice = req.body.total;
+    const newTicket = new ticket({
+      total: totalPrice,
+      status: statuz,
+      userId: user._id,
+      matchId: req.body.matchId,
+      members: req.body.values.members,
+      stand: req.body.stand,
+    });
+    newTicket.save();
+    const newTicketId = newTicket._id;
+    await generateRazorpay(newTicketId, totalPrice)
+      .then((response) => {
+        let data = {
+          response,
+          newTicketId,
+        };
+        return res.status(201).send(data);
       })
       .catch((e) => {
         console.log(e);
       });
+  },
+  getNews: async (req, res) => {
+    try {
+      const news = await News.find().limit(3);
+      return res.status(201).send(news);
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  },
+  getPartner: async (req, res) => {
+    try {
+      const partners = await partner.find();
+      return res.status(201).send(partners);
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  },
+  verifyPayment: async (req, res) => {
+    try {
+      console.log(req.body);
+    } catch (error) {
+      return res.status(500).send(error);
+    }
   },
 };

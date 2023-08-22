@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const stripe =require("../controllers/paymentController")
+const stripe = require("../controllers/paymentController");
 
 const { sendEmailOTP, registerMail } = require("../controllers/mailController");
 const { verifyUserLogin, localVariables } = require("../middleware/auth");
@@ -16,7 +16,10 @@ const {
   createResetSession,
   getMatch,
   getOneMatch,
-  doPayment
+  doPayment,
+  getNews,
+  getPartner,
+  verifyPayment
 } = require("../controllers/userController");
 
 const { adminLogin } = require("../controllers/adminController");
@@ -26,7 +29,8 @@ router.post("/register", register);
 router.post("/registerMail", registerMail);
 router.post("/authenticate");
 router.post("/login", verifyUser, login);
-router.post("/doPayment",doPayment)
+router.post("/doPayment", doPayment);
+router.post("/verifyPayment", verifyPayment);
 // GET Methods
 router.get("/user/:email", getUser);
 router.get("/generateOTP", verifyUser, localVariables, generateOTP);
@@ -34,7 +38,8 @@ router.get("/verifyOTP", verifyOTP);
 router.get("/createResetSession", createResetSession);
 router.get("/getMatch", getMatch);
 router.get("/getOneMatch/:id", getOneMatch);
-
+router.get("/getNews", getNews);
+router.get("/getPartner", getPartner);
 // PUT Methods
 router.put("/updateUser", verifyUserLogin, updateUser);
 router.put("/resetPassword", verifyUser, resetPassword);

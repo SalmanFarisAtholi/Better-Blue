@@ -4,12 +4,12 @@ var instance = new Razorpay({
   key_secret: process.env.key_secret,
 });
 
-async function generateRazorpay(req, res) {
+async function generateRazorpay(newTicketId, totalPrice, next) {
   try {
     return new Promise((resolve, reject) => {
       var options = {
-        amount: 1000,
-        receipt: "vspaa",
+        amount: totalPrice * 100,
+        receipt: "" + newTicketId,
         currency: "INR",
         payment_capture: "0",
       };
@@ -17,7 +17,7 @@ async function generateRazorpay(req, res) {
         if (err) {
           console.log(err);
         } else {
-          
+          console.log("New order",order);
           resolve(order);
         }
       });

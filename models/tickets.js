@@ -1,32 +1,46 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 // Define the ticket schema
-const ticketSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-  },
- 
-  status: {
-    type: Boolean,
-  },
-  createdBy: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-  },
-  matchId:{
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-  }
-});
+const ticketSchema = new mongoose.Schema(
+  {
+    total: {
+      type: Number,
+      required: true,
+    },
+    status: {
+      type: String,
+      required: true,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
+    },
+    matchId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "fixture",
+      required: true,
+    },
+    date: {
+      type: Date,
+    },
+    stand: {
+      type: String,
+      required: true,
+    },
 
-module.exports = mongoose.model('ticket', ticketSchema);
+    members: [
+      {
+        name: {
+          type: String,
+        },
+        mobileNumber: {
+          type: Number,
+        },
+      },
+    ],
+  },
+  { timestamps: true }
+);
 
+module.exports = mongoose.model("ticket", ticketSchema);
