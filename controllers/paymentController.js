@@ -1,4 +1,9 @@
 const Razorpay = require("razorpay");
+const axios = require('axios');
+axios.defaults.auth = {
+  username: process.env.key_id,
+  password: process.env.key_secret,
+};
 var instance = new Razorpay({
   key_id: process.env.key_id,
   key_secret: process.env.key_secret,
@@ -27,34 +32,18 @@ async function generateRazorpay(newTicketId, totalPrice, next) {
     next(error);
   }
 }
+async function getPaymentStatus(paymentId) {
+  try {
+    const response = await axios.get(`https://api.razorpay.com/v1/payments/${paymentId}`);
+    const payment = response.data;
+
+    return payment.status; // Return the payment status
+  } catch (error) {
+    console.error('Error fetching payment details:', error);
+  }
+}
 
 module.exports = {
   generateRazorpay,
+  getPaymentStatus
 };
-
-// verifyPayment: (req, res, next) => {
-//   try {
-//     console.log("VerifyPayment running");
-//     const body = req.body;
-
-//     userHelpers
-//       .verifyPayment(body)
-//       .then(() => {
-//         console.log(body.order.receipt);
-//         console.log(req.body);
-//         var orderId = body.order.receipt;
-
-//         userHelpers.changePaymentStatus(orderId).then(() => {
-//           console.log("Payment successful");
-//           res.json({ status: true });
-//         });
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//         res.json({ status: false });
-//       });
-//   } catch (error) {
-//     console.log(error);
-//     next(error);
-//   }
-// }

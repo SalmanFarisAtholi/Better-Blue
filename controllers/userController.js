@@ -7,7 +7,7 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 const otpGenerator = require("otp-generator");
 const fixture = require("../models/fixtures");
 const ticket = require("../models/tickets");
-const { generateRazorpay } = require("./paymentController");
+const { generateRazorpay, getPaymentStatus } = require("./paymentController");
 const partner = require("../models/partner");
 const News = require("../models/news");
 
@@ -286,7 +286,23 @@ module.exports = {
   },
   verifyPayment: async (req, res) => {
     try {
-      console.log(req.body);
+      const paymentId = req.body.response.razorpay_payment_id;
+      console.log(paymentId);
+      getPaymentStatus(paymentId)
+        .then((status) => {
+          console.log(status);
+          if (status==="authorized") {
+            return res.status(201).send(status);
+
+          } else {
+            
+          }
+          
+        })
+        .catch((error) => {
+          console.log(error);
+          return res.status(500).send(error);
+        });
     } catch (error) {
       return res.status(500).send(error);
     }

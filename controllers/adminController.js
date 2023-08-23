@@ -4,6 +4,7 @@ const fixture = require("../models/fixtures");
 const Opponent = require("../models/opponent");
 const partner = require("../models/partner");
 const player = require("../models/player");
+const result = require("../models/result");
 
 const jwt = require("jsonwebtoken");
 const News = require("../models/news");
@@ -224,7 +225,30 @@ module.exports = {
       return res.status(500).send(error);
     }
   },
-  addResult:async(req,res)=>{
-    console.log(req.body);
-  }
+  addResult: async (req, res) => {
+    try {
+      const newResult = new result({
+        ballPosition: req.body.values.ballPosition,
+        match: req.body.values.match,
+        result: req.body.values.result,
+        scored: req.body.values.scored,
+        link: req.body.values.link,
+        conceded: req.body.values.conceded,
+        ourShots: req.body.values.ourShots,
+        thereShots: req.body.values.thereShots,
+        ourTarget: req.body.values.ourTarget,
+        thereTarget: req.body.values.thereTarget,
+        ourCorner: req.body.values.ourCorner,
+        thereCorner: req.body.values.thereCorner,
+        ourFoules: req.body.values.ourFoules,
+        thereFoules: req.body.values.thereFoules,
+        goals: req.body.goals,
+      })
+      newResult.save().then(() => {
+        res.status(201).send({ msg: "Result Added Successfully" });
+      });
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  },
 };
