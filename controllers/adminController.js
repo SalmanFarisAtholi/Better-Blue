@@ -8,6 +8,7 @@ const result = require("../models/result");
 
 const jwt = require("jsonwebtoken");
 const News = require("../models/news");
+const opponent = require("../models/opponent");
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 module.exports = {
@@ -143,6 +144,25 @@ module.exports = {
       return res.status(500).send(error);
     }
   },
+  editOpponent: async (req, res) => {
+    try {
+      const id = req.body.id;
+      // console.log(id);
+      const opponent = {
+        name: req.body.name,
+        shortName: req.body.shortName,
+        logo: req.file.filename,
+        totalMatch: req.body.totalMatch,
+        win: req.body.win,
+        draw: req.body.draw,
+      };
+      await Opponent.findByIdAndUpdate(id, opponent).then((data) => {
+        return res.status(201).send({ msg: " Updated...!" });
+      });
+    } catch (error) {
+      return res.status(401).send({ error });
+    }
+  },
   getOpponent: async (req, res) => {
     try {
       const opponents = await Opponent.find();
@@ -225,8 +245,29 @@ module.exports = {
       return res.status(500).send(error);
     }
   },
+  getResult: async (req, res) => {
+    try {
+      const results = await result
+        .find()
+        .populate({
+          path: "match",
+          populate: {
+            path: "opponentId",
+            model: "opponent",
+          },
+        })
+        .sort({ createdAt: -1 })
+        .limit(4);
+
+      return res.status(201).send(results);
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  },
   addResult: async (req, res) => {
     try {
+      console.log(req.body);
+      const matchId = req.body.values.match;
       const newResult = new result({
         ballPosition: req.body.values.ballPosition,
         match: req.body.values.match,
@@ -243,10 +284,22 @@ module.exports = {
         ourFoules: req.body.values.ourFoules,
         thereFoules: req.body.values.thereFoules,
         goals: req.body.goals,
-      })
-      newResult.save().then(() => {
-        res.status(201).send({ msg: "Result Added Successfully" });
       });
+      newResult.save().then(() => {
+        fixture.updateOne({ _id: matchId }, { access: false }).then(() => {
+          res.status(201).send({ msg: "Result Added Successfully" });
+        });
+      });
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  },
+  getOneOpponent: async (req, res) => {
+    try {
+      const id = req.params.id;
+      console.log(id);
+      const match = await opponent.findById(id);
+      return res.status(201).send(match);
     } catch (error) {
       return res.status(500).send(error);
     }

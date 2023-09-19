@@ -19,7 +19,10 @@ const {
   doPayment,
   getNews,
   getPartner,
-  verifyPayment
+  verifyPayment,
+  getResult,
+  getPlayer,
+  getOnePlayer
 } = require("../controllers/userController");
 
 const { adminLogin } = require("../controllers/adminController");
@@ -37,9 +40,16 @@ router.get("/generateOTP", verifyUser, localVariables, generateOTP);
 router.get("/verifyOTP", verifyOTP);
 router.get("/createResetSession", createResetSession);
 router.get("/getMatch", getMatch);
+router.get("/getResult", getResult);
 router.get("/getOneMatch/:id", getOneMatch);
 router.get("/getNews", getNews);
 router.get("/getPartner", getPartner);
+router.get("/getPlayer", getPlayer);
+router.get("/getOnePlayer/:id", getOnePlayer);
+
+
+
+
 // PUT Methods
 router.put("/updateUser", verifyUserLogin, updateUser);
 router.put("/resetPassword", verifyUser, resetPassword);

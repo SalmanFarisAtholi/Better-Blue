@@ -9,7 +9,11 @@ const fixture = require("../models/fixtures");
 const ticket = require("../models/tickets");
 const { generateRazorpay, getPaymentStatus } = require("./paymentController");
 const partner = require("../models/partner");
+const player = require("../models/player");
+
 const News = require("../models/news");
+const tickets = require("../models/tickets");
+const result = require("../models/result");
 
 const app = express();
 
@@ -113,18 +117,15 @@ module.exports = {
 
   getUser: async (req, res) => {
     try {
-      const { email } = req.params;
-      console.log(email);
-      if (!email) return res.status(404).send({ error: "Invalid User" });
-      const user = userModel.find({ phone: 5644145521 });
+      const email1 = req.params.email;
+      console.log(email1, "kkk");
+    
+      if (!email1) return res.status(404).send({ error: "Invalid User" });
+      const user = await userModel.findOne({email:email1 });
 
-      console.log(user);
-      if (err) return res.status(500).send({ err });
       if (!user) return res.status(501).send({ error: "Can't Find User" });
 
-      //  remove password
-      const { password, ...rest } = Object.assign({}, user.toJSON());
-      return res.status(201).send(rest);
+      return res.status(201).send(user);
     } catch (error) {
       return res.status(404).send({ error: "Can't Find User Data" });
     }
@@ -231,6 +232,25 @@ module.exports = {
       return res.status(500).send(error);
     }
   },
+  getResult: async (req, res) => {
+    try {
+      const results = await result
+        .find()
+        .populate({
+          path: "match",
+          populate: {
+            path: "opponentId",
+            model: "opponent",
+          },
+        })
+        .sort({ createdAt: -1 })
+        .limit(4);
+
+      return res.status(201).send(results);
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  },
   getOneMatch: async (req, res) => {
     try {
       const id = req.params.id;
@@ -284,25 +304,46 @@ module.exports = {
       return res.status(500).send(error);
     }
   },
+  getPlayer: async (req, res) => {
+    try {
+      const players = await player.find();
+      return res.status(201).send(players);
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  },
   verifyPayment: async (req, res) => {
     try {
+      console.log(req.body);
       const paymentId = req.body.response.razorpay_payment_id;
-      console.log(paymentId);
-      getPaymentStatus(paymentId)
-        .then((status) => {
-          console.log(status);
-          if (status==="authorized") {
-            return res.status(201).send(status);
+      const newTicketId = req.body.newData.newTicketId;
 
+      getPaymentStatus(paymentId)
+        .then(async (status) => {
+          console.log(status);
+          if (status === "authorized") {
+            await tickets.updateOne(
+              { _id: newTicketId },
+              { $set: { status: "Booked" } }
+            );
+            return res.status(201).send(status);
           } else {
-            
           }
-          
+          return res.status(404).send(error);
         })
         .catch((error) => {
           console.log(error);
           return res.status(500).send(error);
         });
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  },
+  getOnePlayer :async (req, res) => {
+    try {
+      const id = req.params.id;
+      const onePlayer = await player.findById(id)
+      return res.status(201).send(onePlayer);
     } catch (error) {
       return res.status(500).send(error);
     }
