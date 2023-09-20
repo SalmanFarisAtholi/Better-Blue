@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const stripe = require("../controllers/paymentController");
 
-const { sendEmailOTP, registerMail } = require("../controllers/mailController");
+const { registerMail } = require("../controllers/mailController");
 const { verifyUserLogin, localVariables } = require("../middleware/auth");
 const {
   register,

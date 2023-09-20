@@ -14,6 +14,7 @@ const player = require("../models/player");
 const News = require("../models/news");
 const tickets = require("../models/tickets");
 const result = require("../models/result");
+const { ticketMail } = require("./mailController");
 
 const app = express();
 
@@ -119,9 +120,9 @@ module.exports = {
     try {
       const email1 = req.params.email;
       console.log(email1, "kkk");
-    
+
       if (!email1) return res.status(404).send({ error: "Invalid User" });
-      const user = await userModel.findOne({email:email1 });
+      const user = await userModel.findOne({ email: email1 });
 
       if (!user) return res.status(501).send({ error: "Can't Find User" });
 
@@ -326,23 +327,32 @@ module.exports = {
               { _id: newTicketId },
               { $set: { status: "Booked" } }
             );
-            return res.status(201).send(status);
-          } else {
+            const updatedTicket = await tickets
+              .findById(newTicketId)
+              .populate("userId");
+            const ticketSent = ticketMail(updatedTicket);
+            ticketSent
+              .then((data) => {
+                 res.status(200).send("You should receive an email from us.");
+              })
+              .catch((error) => {
+                console.log('www ',error);
+                 res.status(404).send(error);
+              });
           }
-          return res.status(404).send(error);
         })
         .catch((error) => {
           console.log(error);
-          return res.status(500).send(error);
+           res.status(500).send(error);
         });
     } catch (error) {
-      return res.status(500).send(error);
+       res.status(500).send(error);
     }
   },
-  getOnePlayer :async (req, res) => {
+  getOnePlayer: async (req, res) => {
     try {
       const id = req.params.id;
-      const onePlayer = await player.findById(id)
+      const onePlayer = await player.findById(id);
       return res.status(201).send(onePlayer);
     } catch (error) {
       return res.status(500).send(error);
