@@ -22,7 +22,8 @@ const {
   verifyPayment,
   getResult,
   getPlayer,
-  getOnePlayer
+  getOnePlayer,
+  getUserTicket
 } = require("../controllers/userController");
 
 const { adminLogin } = require("../controllers/adminController");
@@ -46,6 +47,7 @@ router.get("/getNews", getNews);
 router.get("/getPartner", getPartner);
 router.get("/getPlayer", getPlayer);
 router.get("/getOnePlayer/:id", getOnePlayer);
+router.get("/getUserTicket/:id", getUserTicket);
 
 
 

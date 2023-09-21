@@ -333,20 +333,20 @@ module.exports = {
             const ticketSent = ticketMail(updatedTicket);
             ticketSent
               .then((data) => {
-                 res.status(200).send("You should receive an email from us.");
+                res.status(200).send("You should receive an email from us.");
               })
               .catch((error) => {
-                console.log('www ',error);
-                 res.status(404).send(error);
+                console.log("www ", error);
+                res.status(404).send(error);
               });
           }
         })
         .catch((error) => {
           console.log(error);
-           res.status(500).send(error);
+          res.status(500).send(error);
         });
     } catch (error) {
-       res.status(500).send(error);
+      res.status(500).send(error);
     }
   },
   getOnePlayer: async (req, res) => {
@@ -354,6 +354,26 @@ module.exports = {
       const id = req.params.id;
       const onePlayer = await player.findById(id);
       return res.status(201).send(onePlayer);
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  },
+  getUserTicket: async (req, res) => {
+    try {
+      const id = req.params.id;
+      console.log(id);
+      const statuz = "Booked";
+      const user = await userModel.findOne({ email: id });
+      const userTickets = await ticket
+        .find({ userId: user._id, status: statuz })
+        .populate({
+          path: "matchId",
+          populate: {
+            path: "opponentId",
+            model: "opponent",
+          },
+        });
+      return res.status(201).send(userTickets);
     } catch (error) {
       return res.status(500).send(error);
     }
