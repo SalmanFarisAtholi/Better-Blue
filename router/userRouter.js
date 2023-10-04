@@ -45,7 +45,7 @@ router.get("/getResult", getResult);
 router.get("/getOneMatch/:id", getOneMatch);
 router.get("/getNews", getNews);
 router.get("/getPartner", getPartner);
-router.get("/getPlayer", getPlayer);
+router.get("/getPlayer", verifyUserLogin,getPlayer);
 router.get("/getOnePlayer/:id", getOnePlayer);
 router.get("/getUserTicket/:id", getUserTicket);
 

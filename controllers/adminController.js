@@ -112,6 +112,7 @@ module.exports = {
     }
   },
   getMatch: async (req, res) => {
+    console.log(req.headers);
     try {
       const fixtures = await fixture
         .find({ access: true })
@@ -246,7 +247,7 @@ module.exports = {
     }
   },
   getResult: async (req, res) => {
-    try {
+    try { 
       const results = await result
         .find()
         .populate({

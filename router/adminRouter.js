@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const {verifyAdmin} = require("../middleware/auth");
+
 const {
   adminLogin,
   createStand,
@@ -34,8 +36,8 @@ router.get("/getStand", getStand);
 router.get("/getMatch", getMatch);
 router.get("/getOpponent", getOpponent);
 router.get("/getNews", getNews);
-router.get("/getPartners", getPartner);
-router.get("/getPlayer", getPlayer);
+router.get("/getPartners",getPartner);
+router.get("/getPlayer",getPlayer);
 router.get("/getResult", getResult);
 router.get("/getOneOpponent/:id",getOneOpponent)
 
