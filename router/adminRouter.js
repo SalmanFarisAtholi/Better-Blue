@@ -23,23 +23,23 @@ const {
 } = require("../controllers/adminController");
 const { uploadImage } = require("../middleware/multer");
 // POST Methods
-router.post("/createStand", createStand);
-router.post("/addMatch", addMatch);
-router.post("/addOpponent", uploadImage.single("logo"), addOpponent);
-router.post("/addNews", uploadImage.single("image"), addNews);
-router.post("/addPartner", uploadImage.single("logo"), addPartner);
-router.post("/addPlayer", uploadImage.single("photo"), addPlayer);
-router.post("/editOpponent", uploadImage.single("logo"), editOpponent);
-router.post("/addResult",addResult)
+router.post("/createStand",verifyAdmin, createStand);
+router.post("/addMatch", verifyAdmin,addMatch);
+router.post("/addOpponent",verifyAdmin, uploadImage.single("logo"), addOpponent);
+router.post("/addNews",verifyAdmin, uploadImage.single("image"), addNews);
+router.post("/addPartner",verifyAdmin, uploadImage.single("logo"), addPartner);
+router.post("/addPlayer", verifyAdmin,uploadImage.single("photo"), addPlayer);
+router.post("/editOpponent",verifyAdmin, uploadImage.single("logo"), editOpponent);
+router.post("/addResult",verifyAdmin,addResult)
 //GET Methods
-router.get("/getStand", getStand);
-router.get("/getMatch", getMatch);
-router.get("/getOpponent", getOpponent);
-router.get("/getNews", getNews);
-router.get("/getPartners",getPartner);
-router.get("/getPlayer",getPlayer);
-router.get("/getResult", getResult);
-router.get("/getOneOpponent/:id",getOneOpponent)
+router.get("/getStand", verifyAdmin,getStand);
+router.get("/getMatch",verifyAdmin, getMatch);
+router.get("/getOpponent",verifyAdmin, getOpponent);
+router.get("/getNews",verifyAdmin, getNews);
+router.get("/getPartners",verifyAdmin,getPartner);
+router.get("/getPlayer",verifyAdmin,getPlayer);
+router.get("/getResult",verifyAdmin, getResult);
+router.get("/getOneOpponent/:id",verifyAdmin,getOneOpponent)
 
 
 module.exports = router;

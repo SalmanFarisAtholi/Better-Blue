@@ -4,10 +4,10 @@ const verifyUserLogin = async (req, res, next) => {
   try {
     
     const token = req.headers.authorization.split(" ")[1];
-    console.log(token);
+    // console.log(token);
 
     const decodedToken = await jwt.verify(token, process.env.JWT_SECRET_KEY);
-    console.log(decodedToken);
+    // console.log(decodedToken);
     req.user = decodedToken;
 
     next();
@@ -19,10 +19,10 @@ const verifyAdmin = async (req, res, next) => {
   try {
     
     const token = req.headers.authorization.split(" ")[1];
-    console.log(token);
+    // console.log(token);
 
     const decodedToken = await jwt.verify(token, process.env.JWT_SECRET_KEY);
-    console.log(decodedToken);
+    // console.log(decodedToken);
     req.user = decodedToken;
 
     next();

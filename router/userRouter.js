@@ -40,14 +40,14 @@ router.get("/user/:email", getUser);
 router.get("/generateOTP", generateOTP);
 router.get("/verifyOTP", verifyOTP);
 router.get("/createResetSession", createResetSession);
-router.get("/getMatch", getMatch);
-router.get("/getResult", getResult);
-router.get("/getOneMatch/:id", getOneMatch);
-router.get("/getNews", getNews);
-router.get("/getPartner", getPartner);
-router.get("/getPlayer",getPlayer);
-router.get("/getOnePlayer/:id", getOnePlayer);
-router.get("/getUserTicket/:id", getUserTicket);
+router.get("/getMatch", verifyUserLogin,getMatch);
+router.get("/getResult", verifyUserLogin,getResult);
+router.get("/getOneMatch/:id",verifyUserLogin, getOneMatch);
+router.get("/getNews",verifyUserLogin, getNews);
+router.get("/getPartner",verifyUserLogin, getPartner);
+router.get("/getPlayer",verifyUserLogin,getPlayer);
+router.get("/getOnePlayer/:id",verifyUserLogin, getOnePlayer);
+router.get("/getUserTicket/:id",verifyUserLogin, getUserTicket);
 
 
 
