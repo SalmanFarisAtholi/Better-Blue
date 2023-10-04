@@ -247,7 +247,7 @@ module.exports = {
     }
   },
   getResult: async (req, res) => {
-    try { 
+    try {
       const results = await result
         .find()
         .populate({
@@ -288,7 +288,9 @@ module.exports = {
       });
       newResult.save().then(() => {
         fixture.updateOne({ _id: matchId }, { access: false }).then(() => {
-          res.status(201).send({ msg: "Result Added Successfully" });
+          player.updateMany({}, { $inc: { totalMatch: 1 } }).then(() => {
+            res.status(201).send({ msg: "Result Added Successfully" });
+          });
         });
       });
     } catch (error) {
