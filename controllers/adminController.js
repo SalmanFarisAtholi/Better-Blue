@@ -307,4 +307,27 @@ module.exports = {
       return res.status(500).send(error);
     }
   },
+  playerUpdate: async (req, res) => {
+    try {
+      const { goals, assists } = req.body;
+      console.log(goals);
+      console.log(assists);
+      if (goals) {
+        for (const playerName of goals) {
+          await player.updateOne({ name: playerName }, { $inc: { goal: 1 } });
+        }
+      }
+      if (assists) {
+        for (const playerName2 of assists) {
+          await player.updateOne(
+            { name: playerName2 },
+            { $inc: { assist: 1 } }
+          );
+        }
+      }
+      res.status(201).send({ msg: "Player Updation Successfully" });
+    } catch (error) {
+      return res.status(500).send(error);
+    }
+  },
 };

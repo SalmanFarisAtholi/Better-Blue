@@ -19,7 +19,8 @@ const {
   addResult,
   getResult,
   getOneOpponent,
-  editOpponent
+  editOpponent,
+  playerUpdate
 } = require("../controllers/adminController");
 const { uploadImage } = require("../middleware/multer");
 // POST Methods
@@ -31,6 +32,8 @@ router.post("/addPartner",verifyAdmin, uploadImage.single("logo"), addPartner);
 router.post("/addPlayer", verifyAdmin,uploadImage.single("photo"), addPlayer);
 router.post("/editOpponent",verifyAdmin, uploadImage.single("logo"), editOpponent);
 router.post("/addResult",verifyAdmin,addResult)
+router.post("/playerUpdate",verifyAdmin,playerUpdate)
+
 //GET Methods
 router.get("/getStand", verifyAdmin,getStand);
 router.get("/getMatch",verifyAdmin, getMatch);
